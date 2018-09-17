@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>index.html</title>
+  <script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
+
+  <script src='tinymce/js/tinymce/tinymce.min.js'></script>
+
+  <style>
+    html, body  { height: 100%; font-size: 14px; }
+    #mytextarea { height: 80%; }
+  </style>
+
+  <script>
+    $(function() {
+      tinymce.init({
+        selector: '#mytextarea',
+        images_upload_url: "upload.php",
+        plugins: "lists,image,table,textcolor",
+        toolbar: "undo redo | fontsizeselect | formatselect | bold italic forecolor backcolor | alignleft aligncenter alignright | bullist numlist ",
+        setup: function (editor) {
+          editor.on('init', function (e) {
+            console.log('Editor was initialized.');
+
+            $.get("default.html", { t: new Date().getTime() }).then(function(html) {
+              console.log(html);
+              tinymce.activeEditor.setContent(html);
+              //tinymce.activeEditor.setContent(' <p>Hello, World!</p> <p>ほげほげも<strong>げ</strong>もげ</p> <p><em>asdasdasd</em></p> <p>&nbsp;</p> <p><em><img src="images/313c8901.jpg" alt="" width="476" height="640" /></em></p> <h1><em>ｗｗｗｗｗ</em></h1> ');
+            }).fail(function(err) {
+              alert("get エラー");
+              console.error(err);
+            });
+          });
+        }
+      });
+    });
+
+    function hoge_onclick() {
+      var html = tinymce.activeEditor.getContent();
+      console.log(html);
+      $.post("save.php", {
+        html: html
+      });
+      // このhtmlをDBに保存すればよい。
+    }
+  </script>
+</head>
+<body>
+  <button class="btn btn-primary" onclick="hoge_onclick()">保存</button>
+  <textarea id="mytextarea">Hello, World!</textarea>
+</body>
+</html>
+<!-- vim: set ts=2 sts=2 sw=2 expandtab list: -->
